@@ -1,31 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import Swal from 'sweetalert2';
+import React, { useState, useEffect } from "react";
+import Swal from "sweetalert2";
 
 function uuid() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
     var r = (Math.random() * 16) | 0,
-      v = c === 'x' ? r : (r & 0x3) | 0x8;
+      v = c === "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 }
 
+//ls to get todo
 const getTodo = (key) => {
   const storedData = localStorage.getItem(key);
   return storedData ? JSON.parse(storedData) : [];
 };
 
+//ls to save todo
 const saveTodo = (key, data) => {
   localStorage.setItem(key, JSON.stringify(data));
 };
 
 const App = () => {
   const [todoList, setTodoList] = useState([]);
-  const [todoInputValue, setTodoInputValue] = useState('');
+  const [todoInputValue, setTodoInputValue] = useState("");
   const [isEditing, setEditing] = useState(false);
   const [editingTodoId, setEditingTodoId] = useState(null);
 
   const displayNewTodo = () => {
-    const todos = getTodo('todoList');
+    const todos = getTodo("todoList");
     setTodoList(todos);
   };
 
@@ -35,25 +37,25 @@ const App = () => {
 
   const createTodo = () => {
     if (!todoInputValue) {
-      // Handle empty input or provide an error message
       return;
     }
 
-    const todoDatabase = getTodo('todoList');
+    // ls to get todo
+    const todoDatabase = getTodo("todoList");
     const newTodo = {
       todoName: todoInputValue,
       id: uuid(),
       createdAt: Date.now(),
     };
 
-    saveTodo('todoList', [...todoDatabase, newTodo]);
-    setTodoInputValue('');
+    saveTodo("todoList", [...todoDatabase, newTodo]);
+    setTodoInputValue("");
     displayNewTodo();
   };
 
   const updateTodo = () => {
     if (!todoInputValue || !editingTodoId) {
-      // Handle empty input or provide an error message
+      //
       return;
     }
 
@@ -64,23 +66,24 @@ const App = () => {
       return todo;
     });
 
-    saveTodo('todoList', updatedTodos);
+    saveTodo("todoList", updatedTodos);
     setEditing(false);
     setEditingTodoId(null);
-    setTodoInputValue('');
+    setTodoInputValue("");
     displayNewTodo();
   };
 
+  //delete todo
   const deleteTodo = (todoId) => {
     Swal.fire({
-      title: 'Delete Todo',
-      text: 'Are you sure you want to delete item?',
-      icon: 'warning',
+      title: "Delete Todo",
+      text: "Are you sure you want to delete task?",
+      icon: "warning",
       showCancelButton: true,
     }).then((res) => {
       if (res.isConfirmed) {
         const updatedTodos = todoList.filter((todo) => todo.id !== todoId);
-        saveTodo('todoList', updatedTodos);
+        saveTodo("todoList", updatedTodos);
         displayNewTodo();
       }
     });
@@ -91,6 +94,7 @@ const App = () => {
     setEditingTodoId(todoId);
     setTodoInputValue(todoValue);
   };
+
 
   return (
     <div className="flex justify-center items-center h-screen">
@@ -124,19 +128,23 @@ const App = () => {
               type="submit"
               className="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-700"
             >
-              {isEditing ? 'Update todo' : 'Add todo'}
+              {isEditing ? "Update todo" : "Add todo"}
             </button>
           </form>
 
           <div className="mt-5" id="todos">
             {todoList.map((todo) => (
               <section key={todo.id} className="group">
-                <div className="group mb-3 flex flex-row justify-between px-3 mr-3 py-2 group-hover:bg-gray-200 rounded-lg">
-                  <button onClick={() => handleEditMode(todo.id, todo.todoName)}>
+                <div className="group mb-3 flex flex-row justify-between px-3 py-2 group-hover:bg-gray-200 rounded-lg">
+                  <button
+                    onClick={() =>(todo.id, todo.todoName)}
+                  >
                     {todo.todoName}
                   </button>
                   <div className="invisible group-hover:visible">
-                    <button onClick={() => handleEditMode(todo.id, todo.todoName)}>
+                    <button
+                      onClick={() => handleEditMode(todo.id, todo.todoName)}
+                    >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
